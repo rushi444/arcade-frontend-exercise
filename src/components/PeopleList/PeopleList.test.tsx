@@ -1,31 +1,31 @@
-import '@testing-library/jest-dom/extend-expect';
+import "@testing-library/jest-dom/extend-expect";
 
-import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
+import React from "react";
+import { render, fireEvent, act, getByLabelText } from "@testing-library/react";
 
-import { PeopleList, Props } from '../PeopleList';
+import { PeopleList, Props } from "../PeopleList";
 
-describe('PeopleList', () => {
-  const buildSubject = (props: Props) => render(<PeopleList {...props} />)
+describe("PeopleList", () => {
+  const buildSubject = (props: Props) => render(<PeopleList {...props} />);
 
-  describe('rendering', () => {
+  describe("rendering", () => {
     const props = {
       people: [
         {
-          id: '1',
-          name: 'Ardelia Digan',
+          id: "1",
+          name: "Ardelia Digan",
         },
       ],
     };
 
-    it('renders a list of people', () => {
+    it("renders a list of people", () => {
       const { getByText } = buildSubject(props);
 
-      expect(getByText('Ardelia Digan')).toBeDefined();
+      expect(getByText("Ardelia Digan")).toBeDefined();
     });
   });
 
-  describe('searching', () => {
+  describe("searching", () => {
     beforeEach(() => {
       jest.useFakeTimers();
     });
@@ -37,33 +37,46 @@ describe('PeopleList', () => {
     const props = {
       people: [
         {
-          id: '1',
-          name: 'Ardelia Digan',
-          teamName: 'The Hackers',
+          id: "1",
+          name: "Ardelia Digan",
+          teamName: "The Hackers",
         },
         {
-          id: '2',
-          name: 'Cello Inde',
-          teamName: 'The Hustlers',
+          id: "2",
+          name: "Cello Inde",
+          teamName: "The Hustlers",
         },
       ],
     };
 
-    it('filters a list of people by name', () => {
+    it("filters a list of people by name", () => {
       const { queryByText, getByLabelText } = buildSubject(props);
 
-      fireEvent.change(getByLabelText('Search'), {
+      fireEvent.change(getByLabelText("Search"), {
         target: {
-          value: 'Ardelia Digan'
-        }
+          value: "Ardelia Digan",
+        },
       });
 
       act(() => jest.runAllTimers());
 
-      expect(queryByText('Ardelia Digan')).toBeInTheDocument();
-      expect(queryByText('Cello Inde')).not.toBeInTheDocument();
+      expect(queryByText("Ardelia Digan")).toBeInTheDocument();
+      expect(queryByText("Cello Inde")).not.toBeInTheDocument();
     });
 
-    it.todo('filters a list of people by teamName');
+    it("filters a list of people by teamName", () => {
+      const { getByLabelText, queryByText } = buildSubject(props);
+
+      fireEvent.change(getByLabelText("Search"), {
+        target: {
+          value: "The Hackers",
+        },
+      });
+
+      act(() => jest.runAllTimers());
+
+      expect(queryByText("The Hackers")).toBeInTheDocument();
+      expect(queryByText("The Hustlers")).not.toBeInTheDocument();
+    });
   });
 });
